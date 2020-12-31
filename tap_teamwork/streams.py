@@ -6,6 +6,22 @@ from tap_teamwork.base import BaseStream, TimeRangeByObjectStream
 LOGGER = singer.get_logger()
 
 
+class CompaniesStream(BaseStream):
+    TABLE = "companies"
+    RESPONSE_KEY = "companies"
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return f"companies.json"
+
+    # The 'companies' endpoint is only in API version 1, so requires a different base
+    def get_url_base(self):
+        if not self.config["hostname"].startswith("http"):
+            return ValueError("Hostname config should begin with 'https://'.")
+        return self.config["hostname"] + "/"
+
 class LatestActivityStream(BaseStream):
     TABLE = "latest_activity"
     RESPONSE_KEY= "activities"
@@ -122,6 +138,7 @@ class TagsStream(BaseStream):
 
 
 AVAILABLE_STREAMS = [
+    CompaniesStream,
     LatestActivityStream,
     ProjectsStream,
     ProjectUpdatesStream,
