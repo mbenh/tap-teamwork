@@ -15,9 +15,6 @@ setuptools.setup(
         [console_scripts]
         tap-teamwork=tap_teamwork:main
     """,
-    install_requires=[
-        "singer-python",
-        "requests"
-    ],
+    install_requires=["singer-python", "requests"],
     include_package_data=True,
 )

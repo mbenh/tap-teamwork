@@ -18,13 +18,12 @@ class CompaniesStream(BaseStream):
 
     # The 'companies' endpoint is only in API version 1, so requires a different base
     def get_url_base(self):
-        if not self.config["hostname"].startswith("http"):
-            return ValueError("Hostname config should begin with 'https://'.")
         return self.config["hostname"] + "/"
+
 
 class LatestActivityStream(BaseStream):
     TABLE = "latest_activity"
-    RESPONSE_KEY= "activities"
+    RESPONSE_KEY = "activities"
 
     CACHE_RESULTS = True
 
@@ -37,7 +36,6 @@ class MilestonesStream(BaseStream):
     TABLE = "milestones"
     RESPONSE_KEY = "milestones"
 
-
     CACHE_RESULTS = True
 
     @property
@@ -48,7 +46,6 @@ class MilestonesStream(BaseStream):
 class ProjectsStream(BaseStream):
     TABLE = "projects"
     RESPONSE_KEY = "projects"
-
 
     @property
     def path(self):
@@ -76,6 +73,7 @@ class ProjectUpdatesStream(BaseStream):
     def path(self):
         return "projects/updates.json"
 
+
 class RisksStream(BaseStream):
     TABLE = "risks"
     RESPONSE_KEY = "risks"
@@ -85,6 +83,7 @@ class RisksStream(BaseStream):
     @property
     def path(self):
         return f"risks.json"
+
 
 class TagsStream(BaseStream):
     TABLE = "tags"
@@ -97,44 +96,19 @@ class TagsStream(BaseStream):
         return f"tags.json"
 
 
-# class TaskStream(TimeRangeByObjectStream):
-#     API_METHOD = "GET"
-#     TABLE = "tasks"
-#     KEY_PROPERTIES = ["id"]
-#     REPLACEMENT_STRING = "<VAR>"
+class TasksStream(BaseStream):
+    TABLE = "tasks"
+    RESPONSE_KEY = "todo-items"
 
-#     CACHE_RESULTS = True
+    CACHE_RESULTS = True
 
-#     def get_object_list(self):
-#         url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/projects"
-#         api_method = "GET"
-#         params = {"page-size": 500}
-#         results = self.client.make_request(url, api_method, params=params)
-#         return [r["id"] for r in results]
+    @property
+    def path(self):
+        return f"tasks.json"
 
-#     @property
-#     def path(self):
-#         return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
-
-
-# class TimeEntryStream(TimeRangeByObjectStream):
-#     API_METHOD = "GET"
-#     TABLE = "time_entries"
-#     KEY_PROPERTIES = ["id"]
-#     REPLACEMENT_STRING = "<VAR>"
-
-#     CACHE_RESULTS = True
-
-#     def get_object_list(self):
-#         url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/users"
-#         api_method = "GET"
-#         params = {"page-size": 500, "memberships": "NONE"}
-#         results = self.client.make_request(url, api_method, params=params)
-#         return [r["id"] for r in results]
-
-#     @property
-#     def path(self):
-#         return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
+    # The 'companies' endpoint is only in API version 1, so requires a different base
+    def get_url_base(self):
+        return self.config["hostname"] + "/"
 
 
 AVAILABLE_STREAMS = [
@@ -146,4 +120,5 @@ AVAILABLE_STREAMS = [
     MilestonesStream,
     RisksStream,
     TagsStream,
+    TasksStream,
 ]

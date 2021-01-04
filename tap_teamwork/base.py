@@ -40,7 +40,7 @@ class BaseStream:
         return f"{base}{self.path}"
 
     def get_params(self, page=1):
-        return {"updatedAfter": None, "page": page, "pageSize": 1000}
+        return {"updatedAfter": None, "page": page, "pageSize": 250}
 
     def get_class_path(self):
         return os.path.dirname(inspect.getfile(self.__class__))
@@ -173,7 +173,7 @@ class BaseStream:
 
             LOGGER.info("Synced page %s for %s", page, self.TABLE)
             params["page"] = params["page"] + 1
-            if len(data) < params["pageSize"]:
+            if len(data) < params.get("pageSize", 250):
                 _next = None
         return all_resources
 
