@@ -106,7 +106,15 @@ class TasksStream(BaseStream):
     def path(self):
         return f"tasks.json"
 
-    # The 'companies' endpoint is only in API version 1, so requires a different base
+    def get_params(self, page=1):
+        return {
+            "updatedAfter": None,
+            "page": page,
+            "pageSize": 250,
+            "includeCompletedTasks": True
+        }
+
+    # The 'tasks' endpoint is only in API version 1, so requires a different base
     def get_url_base(self):
         return self.config["hostname"] + "/"
 
