@@ -52,6 +52,54 @@ class ProjectsStream(BaseStream):
         return f"projects.json"
 
 
+class ProjectCustomFieldsStream(BaseStream):
+    TABLE = "project_custom_fields"
+    RESPONSE_KEY = "included"
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return "projects.json"
+
+    def get_params(self, page=1):
+        return {
+            "updatedAfter": None,
+            "page": page,
+            "pageSize": 250,
+            "includeCustomFields": True,
+            "fields[customfields]": '[id,entity,name,description,type]'
+        }
+
+    def sync_paginated(self, url, params):
+        table = self.TABLE
+        _next = True
+        page = 1
+
+        all_resources = []
+        while _next is not None:
+            result = self.client.make_request(url, self.API_METHOD, params=params)
+            custom_fields = result.get("included", {}).get("customfields", {})
+            raw_records = result.get("included", {}).get("customfieldProjects", {})
+            proc_records = []
+            for k, v in raw_records.items():
+                combined = {**v, **custom_fields[str(v.get("customfieldId"))]}
+                proc_records.append(combined)
+
+            data = self.get_stream_data(proc_records)
+
+            with singer.metrics.record_counter(endpoint=table) as counter:
+                singer.write_records(table, data)
+                counter.increment(len(data))
+                all_resources.extend(data)
+
+            LOGGER.info("Synced page %s for %s", page, self.TABLE)
+            params["page"] = params["page"] + 1
+            if len(data) < params.get("pageSize", 250):
+                _next = None
+        return all_resources
+
+
 class PeopleStream(BaseStream):
     TABLE = "people"
     RESPONSE_KEY = "people"
@@ -123,6 +171,7 @@ AVAILABLE_STREAMS = [
     CompaniesStream,
     LatestActivityStream,
     ProjectsStream,
+    ProjectCustomFieldsStream,
     ProjectUpdatesStream,
     PeopleStream,
     MilestonesStream,

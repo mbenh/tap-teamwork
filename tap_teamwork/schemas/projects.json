@@ -216,7 +216,11 @@
           "type": "string"
       },
       "customFieldValueIds": {
-          "type": "null"
+          "type": ["array", "null"],
+          "additionalItems": true,
+          "items": {
+            "type": "string"
+          }
       }
   },
   "additionalProperties": true
