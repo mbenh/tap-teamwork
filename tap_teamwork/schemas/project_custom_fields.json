@@ -12,7 +12,7 @@
             "type": "integer"
         },
         "value": {
-            "type": "string"
+            "type": ["string", "null"]
         },
         "createdAt": {
             "type": "string"
@@ -21,13 +21,13 @@
             "type": "integer"
         },
         "description": {
-            "type": "string"
+            "type": ["string", "null"]
         },
         "entity": {
             "type": "string"
         },
         "name": {
-            "type": "string"
+            "type": ["string", "null"]
         },
         "type": {
             "type": "string"
