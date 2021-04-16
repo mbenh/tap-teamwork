@@ -167,7 +167,30 @@ class TasksStream(BaseStream):
         return self.config["hostname"] + "/"
 
 
+class CategoriesStream(BaseStream):
+    TABLE = "categories"
+    RESPONSE_KEY = "categories"
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return f"projectCategories.json"
+
+    def get_params(self, page=1):
+        return {
+            "updatedAfter": None,
+            "page": page,
+            "pageSize": 250,
+        }
+
+    # The 'tasks' endpoint is only in API version 1, so requires a different base
+    def get_url_base(self):
+        return self.config["hostname"] + "/"
+
+
 AVAILABLE_STREAMS = [
+    CategoriesStream,
     CompaniesStream,
     LatestActivityStream,
     ProjectsStream,
